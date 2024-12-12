@@ -115,9 +115,6 @@ export const getDatabase = cache(async () => {
       coverPosition: block?.format?.page_cover_position || 0.5,
     };
 
-    // キャッシュされたデータをデバッグ用にログ出力
-    console.log("Cached database info:", JSON.stringify(result, null, 2));
-
     return result;
   } catch (error) {
     console.error("Failed to fetch database:", error);
