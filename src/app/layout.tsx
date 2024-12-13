@@ -1,7 +1,7 @@
 import { Noto_Sans_JP } from "next/font/google";
+import "./globals.css";
 import "react-notion/src/styles.css";
 import "prismjs/themes/prism-tomorrow.css";
-import "./globals.css";
 import Link from "next/link";
 import { getDatabase } from "@/lib/notion";
 import Image from "next/image";
