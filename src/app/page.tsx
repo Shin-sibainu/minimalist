@@ -17,7 +17,7 @@ export default async function MinimalistBlog() {
           width={768}
           height={578}
           alt="cover image"
-          className="rounded-lg"
+          className="rounded object-cover"
         />
       )}
       <div className="space-y-12 my-4">
