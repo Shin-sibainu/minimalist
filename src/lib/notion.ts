@@ -7,14 +7,14 @@ import { getPageImageUrls } from "notion-utils";
 import { cache } from "react";
 
 const NOTION_API_BASE = "https://notion-api.splitbee.io/v1";
+const NOTION_PAGE_ID = process.env.NOTION_PAGE_ID as string;
 
 const notion = new NotionAPI();
 
 //notion-api-worker and react-notion
 export const getAllPosts = cache(async () => {
   try {
-    const tableId = "14a1dcf229c280138249db57bf38f72e";
-    const res = await fetch(`${NOTION_API_BASE}/table/${tableId}`, {
+    const res = await fetch(`${NOTION_API_BASE}/table/${NOTION_PAGE_ID}`, {
       next: { revalidate: 60 }, // 1分間キャッシュ
     });
 
@@ -71,8 +71,7 @@ export const getPostBySlug = cache(async (slug: string) => {
 // react-notion-x
 export const getDatabase = cache(async () => {
   try {
-    const databaseId = "14a1dcf229c280138249db57bf38f72e";
-    const recordMap = await notion.getPage(databaseId);
+    const recordMap = await notion.getPage(NOTION_PAGE_ID);
 
     getPageImageUrls(recordMap, {
       mapImageUrl: (url: string, block: any) => {
