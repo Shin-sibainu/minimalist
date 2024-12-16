@@ -49,7 +49,7 @@ export const getPostBySlug = cache(async (slug: string) => {
     if (!post) return null;
 
     const res = await fetch(`${NOTION_API_BASE}/page/${post.id}`, {
-      next: { revalidate: 60 }, // 1分間キャッシュ
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -57,6 +57,14 @@ export const getPostBySlug = cache(async (slug: string) => {
     }
 
     const page = await res.json();
+
+    if (!page || typeof page !== 'object') {
+      console.error(`Invalid page content for slug ${slug}`);
+      return {
+        ...post,
+        content: {},  // 空のオブジェクトをフォールバックとして返す
+      };
+    }
 
     return {
       ...post,
@@ -67,7 +75,6 @@ export const getPostBySlug = cache(async (slug: string) => {
     return null;
   }
 });
-
 // react-notion-x
 export const getDatabase = cache(async () => {
   try {
