@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// app/(templates)/minimalist/post/[slug]/page.tsx
 import { getPostBySlug, getAllPosts } from "@/lib/notion";
-import { NotionRenderer } from "react-notion";
+import dynamic from "next/dynamic";
 
-// generateStaticParamsを追加してSSGを有効化
+const NotionContent = dynamic(
+  () => import("@/components/notion/NotionContent"),
+  { ssr: false }
+);
+
 export async function generateStaticParams() {
   const posts = await getAllPosts();
-
   return posts.map((post: any) => ({
     slug: post.slug,
   }));
@@ -51,7 +53,7 @@ export default async function BlogPost({
           )}
         </header>
         <div className="prose prose-lg prose-blue max-w-none">
-          <NotionRenderer blockMap={post.content} fullPage hideHeader />
+          <NotionContent content={post.content} />
         </div>
       </article>
     </div>

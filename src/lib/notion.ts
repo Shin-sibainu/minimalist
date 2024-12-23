@@ -15,7 +15,7 @@ const notion = new NotionAPI();
 export const getAllPosts = cache(async () => {
   try {
     const res = await fetch(`${NOTION_API_BASE}/table/${NOTION_PAGE_ID}`, {
-      next: { revalidate: 60 }, // 1分間キャッシュ
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -34,10 +34,14 @@ export const getAllPosts = cache(async () => {
         author: post.Author,
         tags: post.Tags,
         description: post.Description,
-      }));
+      }))
+      .sort((a: any, b: any) => {
+        // 日付の新しい順にソート
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
   } catch (error) {
     console.error("Error fetching all posts:", error);
-    return []; // エラー時は空配列を返す
+    return [];
   }
 });
 
@@ -58,11 +62,11 @@ export const getPostBySlug = cache(async (slug: string) => {
 
     const page = await res.json();
 
-    if (!page || typeof page !== 'object') {
+    if (!page || typeof page !== "object") {
       console.error(`Invalid page content for slug ${slug}`);
       return {
         ...post,
-        content: {},  // 空のオブジェクトをフォールバックとして返す
+        content: {}, // 空のオブジェクトをフォールバックとして返す
       };
     }
 
