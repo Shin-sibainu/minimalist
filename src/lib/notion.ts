@@ -79,6 +79,7 @@ export const getPostBySlug = cache(async (slug: string) => {
     return null;
   }
 });
+
 // react-notion-x
 export const getDatabase = cache(async () => {
   try {
