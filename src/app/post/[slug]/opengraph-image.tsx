@@ -1,5 +1,6 @@
 import { getPostBySlug } from "@/lib/notion";
 import { ImageResponse } from "next/og";
+import { fetchFont } from "./fetch-font";
 
 export const runtime = "edge";
 export const alt = "Blog Post OGP";
@@ -14,11 +15,7 @@ export default async function Image({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // フォントの読み込み
-  const notoSansJP = fetch(
-    new URL("../../fonts/NotoSansJP-Bold.ttf", import.meta.url)
-  ).then((res) => res.arrayBuffer());
-
+  const font = await fetchFont();
   const slug = (await params).slug;
   const post = await getPostBySlug(slug);
 
@@ -33,6 +30,7 @@ export default async function Image({
           padding: "40px",
           position: "relative",
           overflow: "hidden",
+          fontFamily: "Noto Sans JP",
         }}
       >
         <div
@@ -53,9 +51,10 @@ export default async function Image({
             <h1
               style={{
                 fontSize: "44px",
-                fontWeight: "1000",
+                fontWeight: "900",
                 color: "#1a1a1a",
                 lineHeight: 1.5,
+                fontFamily: "Noto Sans JP",
               }}
             >
               {post?.title || "Post not found"}
@@ -64,9 +63,10 @@ export default async function Image({
               <p
                 style={{
                   fontSize: "24px",
-                  fontWeight: "800",
+                  fontWeight: "700",
                   color: "#4b5563",
                   marginTop: "16px",
+                  fontFamily: "Noto Sans JP",
                 }}
               >
                 {post.description}
@@ -135,14 +135,16 @@ export default async function Image({
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: "Noto Sans JP",
-          data: await notoSansJP,
-          style: "normal",
-          weight: 700,
-        },
-      ],
+      ...(font && {
+        fonts: [
+          {
+            name: "Noto Sans JP",
+            data: font,
+            style: "normal",
+            weight: 700,
+          },
+        ],
+      }),
     }
   );
 }
