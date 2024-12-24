@@ -5,6 +5,16 @@ import "prismjs/themes/prism-tomorrow.css";
 import Link from "next/link";
 import { getDatabase } from "@/lib/notion";
 import Image from "next/image";
+import { Metadata } from "next";
+
+// app/layout.tsx
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : "http://localhost:3000"
+  ),
+};
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
