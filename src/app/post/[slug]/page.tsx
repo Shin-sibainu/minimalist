@@ -1,11 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getPostBySlug, getAllPosts } from "@/lib/notion";
 import dynamic from "next/dynamic";
+import { Metadata } from "next";
 
 const NotionContent = dynamic(
   () => import("@/components/notion/NotionContent"),
   { ssr: false }
 );
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug);
+
+  if (!post) {
+    return {
+      title: "記事が見つかりません",
+      description: "お探しの記事は見つかりませんでした。",
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      images: [
+        {
+          url: `/post/${params.slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [`/post/${params.slug}/opengraph-image`],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   try {
@@ -15,7 +54,7 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     console.error("Error generating static params:", error);
-    return [];  // エラー時は空の配列を返す
+    return []; // エラー時は空の配列を返す
   }
 }
 
