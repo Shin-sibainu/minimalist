@@ -43,7 +43,7 @@ export async function generateMetadata({
       authors: post.author ? [post.author] : undefined,
       images: [
         {
-          url: `/post/${slug}/opengraph-image`,
+          url: `/post/${slug}/opengraph-image.png`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -54,7 +54,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: post.title,
       description, // 同じdescriptionを使用
-      images: [`/post/${slug}/opengraph-image`],
+      images: [`/post/${slug}/opengraph-image.png`],  
       creator: post.author ? `@${post.author}` : undefined,
       site: "@your_site_handle",
     },
