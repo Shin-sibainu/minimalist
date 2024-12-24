@@ -8,10 +8,15 @@ const NotionContent = dynamic(
 );
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post: any) => ({
-    slug: post.slug,
-  }));
+  try {
+    const posts = await getAllPosts();
+    return posts.map((post: any) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];  // エラー時は空の配列を返す
+  }
 }
 
 export default async function BlogPost({

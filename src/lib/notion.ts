@@ -19,6 +19,8 @@ export const getAllPosts = cache(async () => {
     });
 
     if (!res.ok) {
+      console.error(`Failed to fetch posts: ${res.status}`);
+      console.error(`Notion Page ID: ${NOTION_PAGE_ID}`);
       throw new Error(`Failed to fetch posts: ${res.status}`);
     }
 
