@@ -11,9 +11,10 @@ const NotionContent = dynamic(
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+  const slug = (await params).slug;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -22,15 +23,27 @@ export async function generateMetadata({
     };
   }
 
+  // descriptionのフォールバック処理
+  const description =
+    post.description ||
+    post.excerpt || // もしexcerptフィールドがある場合
+    `${post.title}に関する記事です。${
+      post.author ? `著者: ${post.author}` : ""
+    }` ||
+    "ブログ記事の説明";
+
   return {
     title: post.title,
-    description: post.description,
+    description, // フォールバック付きのdescription
     openGraph: {
       title: post.title,
-      description: post.description,
+      description, // 同じdescriptionを使用
+      type: "article",
+      publishedTime: post.date,
+      authors: post.author ? [post.author] : undefined,
       images: [
         {
-          url: `/post/${params.slug}/opengraph-image`,
+          url: `/post/${slug}/opengraph-image`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -40,8 +53,10 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.description,
-      images: [`/post/${params.slug}/opengraph-image`],
+      description, // 同じdescriptionを使用
+      images: [`/post/${slug}/opengraph-image`],
+      creator: post.author ? `@${post.author}` : undefined,
+      site: "@your_site_handle",
     },
   };
 }
