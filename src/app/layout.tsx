@@ -15,21 +15,21 @@ export const metadata: Metadata = {
       : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   ),
   title: {
-    default: "Minimalist Blog",
-    template: "%s | Minimalist Blog",
+    default: "Minimalist",
+    template: "%s | Minimalist",
   },
   description: "A minimalist blog template built with Next.js and Notion",
   openGraph: {
     title: {
-      default: "Minimalist Blog",
-      template: "%s | Minimalist Blog",
+      default: "Minimalist",
+      template: "%s | Minimalist",
     },
     description: "A minimalist blog template built with Next.js and Notion",
     type: "website",
-    siteName: "Minimalist Blog",
+    siteName: "Minimalist",
     images: [
       {
-        url: "/opengraph-image.png", // デフォルトのOGP画像
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Minimalist Blog",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Minimalist Blog",
+    title: "Minimalist",
     description: "A minimalist blog template built with Next.js and Notion",
     site: "@your_site_handle",
     creator: "@your_handle",
@@ -71,8 +71,8 @@ export default async function RootLayout({
             </Link>
 
             <nav className="ml-auto">
-              {dbInfo.icon && (
-                typeof dbInfo.icon === 'string' && dbInfo.icon.length <= 2 ? (
+              {dbInfo.icon &&
+                (typeof dbInfo.icon === "string" && dbInfo.icon.length <= 2 ? (
                   // 絵文字の場合
                   <span className="text-3xl">{dbInfo.icon}</span>
                 ) : (
@@ -84,8 +84,7 @@ export default async function RootLayout({
                     height={32}
                     className="dark:invert"
                   />
-                )
-              )}
+                ))}
             </nav>
 
             {/* <nav className="ml-auto">
