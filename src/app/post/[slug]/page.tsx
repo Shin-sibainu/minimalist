@@ -15,6 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const slug = (await params).slug;
   const post = await getPostBySlug(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   if (!post) {
     return {
@@ -23,10 +24,9 @@ export async function generateMetadata({
     };
   }
 
-  // descriptionのフォールバック処理
   const description =
     post.description ||
-    post.excerpt || // もしexcerptフィールドがある場合
+    post.excerpt ||
     `${post.title}に関する記事です。${
       post.author ? `著者: ${post.author}` : ""
     }` ||
@@ -34,10 +34,11 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description, // フォールバック付きのdescription
+    description,
+    metadataBase: new URL(baseUrl || "http://localhost:3000"),
     openGraph: {
       title: post.title,
-      description, // 同じdescriptionを使用
+      description,
       type: "article",
       publishedTime: post.date,
       authors: post.author ? [post.author] : undefined,

@@ -12,8 +12,37 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_VERCEL_URL
       ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-      : "http://localhost:3000"
+      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   ),
+  title: {
+    default: "Minimalist Blog",
+    template: "%s | Minimalist Blog",
+  },
+  description: "A minimalist blog template built with Next.js and Notion",
+  openGraph: {
+    title: {
+      default: "Minimalist Blog",
+      template: "%s | Minimalist Blog",
+    },
+    description: "A minimalist blog template built with Next.js and Notion",
+    type: "website",
+    siteName: "Minimalist Blog",
+    images: [
+      {
+        url: "/opengraph-image.png", // デフォルトのOGP画像
+        width: 1200,
+        height: 630,
+        alt: "Minimalist Blog",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Minimalist Blog",
+    description: "A minimalist blog template built with Next.js and Notion",
+    site: "@your_site_handle",
+    creator: "@your_handle",
+  },
 };
 
 const notoSansJP = Noto_Sans_JP({
@@ -43,13 +72,19 @@ export default async function RootLayout({
 
             <nav className="ml-auto">
               {dbInfo.icon && (
-                <Image
-                  src={dbInfo.icon}
-                  alt="Blog Logo"
-                  width={32}
-                  height={32}
-                  className="dark:invert"
-                />
+                typeof dbInfo.icon === 'string' && dbInfo.icon.length <= 2 ? (
+                  // 絵文字の場合
+                  <span className="text-3xl">{dbInfo.icon}</span>
+                ) : (
+                  // 画像URLの場合
+                  <Image
+                    src={dbInfo.icon}
+                    alt="Blog Logo"
+                    width={32}
+                    height={32}
+                    className="dark:invert"
+                  />
+                )
               )}
             </nav>
 
@@ -79,12 +114,12 @@ export default async function RootLayout({
           <div className="max-w-4xl mx-auto py-6 px-4 text-center text-gray-500">
             © {new Date().getFullYear()} {"Minimalist"} from {""}
             <Link
-              href={"https://nextnote.io"}
+              href={"https://notepress.xyz"}
               className="underline"
               target="_blank"
               rel="noreferrer"
             >
-              NextNote
+              NotePress
             </Link>
           </div>
         </footer>

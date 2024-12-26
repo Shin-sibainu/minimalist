@@ -108,22 +108,30 @@ export const getDatabase = cache(async () => {
       throw new Error("No block data found");
     }
 
-    // URLの変換処理を利用
-    const iconUrl = block?.format?.page_icon
-      ? `https://www.notion.so/image/${encodeURIComponent(
+    // アイコンの処理を修正
+    let icon;
+    if (block?.format?.page_icon) {
+      // 絵文字の場合は直接その文字を使用
+      if (
+        block.format.page_icon.length === 1 ||
+        block.format.page_icon.length === 2
+      ) {
+        icon = block.format.page_icon; // 絵文字をそのまま返す
+      } else {
+        // 画像URLの場合は変換処理
+        icon = `https://www.notion.so/image/${encodeURIComponent(
           block.format.page_icon
-        )}?table=block&id=${block.id}&cache=v2`
-      : undefined;
-
-    const coverUrl = block?.format?.page_cover
-      ? block.format.page_cover.startsWith("/images")
-        ? `https://www.notion.so${block.format.page_cover}`
-        : block.format.page_cover
-      : undefined;
+        )}?table=block&id=${block.id}&cache=v2`;
+      }
+    }
 
     const result = {
-      icon: iconUrl,
-      cover: coverUrl,
+      icon,
+      cover: block?.format?.page_cover
+        ? block.format.page_cover.startsWith("/images")
+          ? `https://www.notion.so${block.format.page_cover}`
+          : block.format.page_cover
+        : undefined,
       title: block?.properties?.title?.[0]?.[0] || undefined,
       coverPosition: block?.format?.page_cover_position || 0.5,
     };
@@ -131,8 +139,6 @@ export const getDatabase = cache(async () => {
     return result;
   } catch (error) {
     console.error("Failed to fetch database:", error);
-
-    // フォールバック値を返す
     return {
       icon: undefined,
       cover: undefined,

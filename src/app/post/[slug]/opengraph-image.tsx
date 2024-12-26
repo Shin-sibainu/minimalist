@@ -51,7 +51,7 @@ export default async function Image({
             <h1
               style={{
                 fontSize: "44px",
-                fontWeight: "900",
+                fontWeight: "700",
                 color: "#1a1a1a",
                 lineHeight: 1.5,
                 fontFamily: "Noto Sans JP",
