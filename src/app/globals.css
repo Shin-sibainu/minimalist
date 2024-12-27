@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* カバー画像がない場合のmargin-top調整 */
+.notion-page:not(:has(.notion-page-cover)) {
+  margin-top: 0 !important;
+}
+
+/* もしくは、より具体的に */
+.notion-page:not(:has(.notion-page-cover)) {
+  padding-top: 0rem !important; /* お好みの値に調整可能 */
+}
+
+/* カバー画像がある場合は既存のスタイルを維持 */
+.notion-page:has(.notion-page-cover) {
+  margin-top: var(--notion-page-offset) !important;
+}
+
+/* カバー画像がない場合のスタイル */
+.notion-content.no-cover .notion-page {
+  margin-top: 0 !important;
+  padding-top: 2rem !important;
+}
+
+/* カバー画像がある場合のスタイル（既存の動作を維持） */
+.notion-content:not(.no-cover) .notion-page {
+  margin-top: var(--notion-page-offset) !important;
+}

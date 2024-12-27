@@ -7,43 +7,65 @@ import { getDatabase } from "@/lib/notion";
 import Image from "next/image";
 import { Metadata } from "next";
 
-// app/layout.tsx
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_VERCEL_URL
-      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-  ),
-  title: {
-    default: "Minimalist",
-    template: "%s | Minimalist",
-  },
-  description: "A minimalist blog template built with Next.js and Notion",
-  openGraph: {
+// メタデータを動的に生成する関数
+async function generateMetadata(): Promise<Metadata> {
+  const dbInfo = await getDatabase();
+  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+  const title = dbInfo.title || "Minimalist";
+  const description = "A minimalist blog template built with Next.js and Notion";
+
+  return {
+    metadataBase: new URL(baseUrl),
     title: {
-      default: "Minimalist",
-      template: "%s | Minimalist",
+      default: title,
+      template: `%s | ${title}`,
     },
-    description: "A minimalist blog template built with Next.js and Notion",
-    type: "website",
-    siteName: "Minimalist",
-    images: [
-      {
-        url: "/opengraph-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Minimalist Blog",
+    description,
+    openGraph: {
+      title: {
+        default: title,
+        template: `%s | ${title}`,
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Minimalist",
-    description: "A minimalist blog template built with Next.js and Notion",
-    site: "@your_site_handle",
-    creator: "@your_handle",
-  },
-};
+      description,
+      type: "website",
+      siteName: title,
+      images: [
+        {
+          url: "/opengraph-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${title} Blog`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      // Notionのデータベースから取得した作者情報があれば使用
+      creator: dbInfo.author ? `@${dbInfo.author}` : undefined,
+      site: dbInfo.site ? `@${dbInfo.site}` : undefined,
+    },
+    alternates: {
+      canonical: "/",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+      },
+    },
+  };
+}
+
+// メタデータを動的に生成
+export const metadata = generateMetadata();
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
@@ -86,24 +108,6 @@ export default async function RootLayout({
                   />
                 ))}
             </nav>
-
-            {/* <nav className="ml-auto">
-              <ul className="flex gap-4">
-                <li>
-                  <Link href={"/"} className="text-gray-600 hover:text-black">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/about"
-                    className="text-gray-600 hover:text-black"
-                  >
-                    About
-                  </Link>
-                </li>
-              </ul>
-            </nav> */}
           </div>
         </header>
 

@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Pagination({
   currentPage,
@@ -7,13 +10,18 @@ export function Pagination({
   currentPage: number;
   totalPages: number;
 }) {
-  // 表示するページ番号を計算
+  const router = useRouter();
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    router.push(`/?page=${page}`);
+  };
+
   const getPageNumbers = () => {
-    const delta = 2; // 現在のページの前後に表示するページ数
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
 
-    // 最初のページは常に表示
     range.push(1);
 
     for (let i = currentPage - delta; i <= currentPage + delta; i++) {
@@ -22,19 +30,16 @@ export function Pagination({
       }
     }
 
-    // 最後のページは常に表示
     if (totalPages > 1) {
       range.push(totalPages);
     }
 
-    // 重複を削除してソート
     const uniqueRange = [...new Set(range)].sort((a, b) => a - b);
 
-    // ドットを追加
     let prev = 0;
     for (const i of uniqueRange) {
       if (prev + 1 < i) {
-        rangeWithDots.push('...');
+        rangeWithDots.push("...");
       }
       rangeWithDots.push(i);
       prev = i;
@@ -44,81 +49,85 @@ export function Pagination({
   };
 
   return (
-    <nav className="flex flex-wrap justify-center gap-2 mt-8" aria-label="ページネーション">
-      {/* モバイルでは前へ/次へのみ表示 */}
-      <div className="flex gap-2 md:hidden w-full justify-between px-2">
-        {currentPage > 1 ? (
-          <Link
-            href={`/?page=${currentPage - 1}`}
-            className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
-          >
-            前へ
-          </Link>
-        ) : (
-          <span className="px-4 py-2 bg-gray-50 text-gray-300 rounded cursor-not-allowed">
-            前へ
-          </span>
-        )}
-        <span className="px-4 py-2">
+    <nav
+      className="flex flex-col items-center gap-4 mt-12 mb-8"
+      aria-label="ページネーション"
+    >
+      {/* モバイル表示 */}
+      <div className="flex items-center gap-4 md:hidden">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+          className={`p-2 rounded-full ${
+            currentPage <= 1
+              ? "bg-gray-100 text-gray-400"
+              : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+          } transition-all duration-200`}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <span className="text-sm font-medium text-gray-700">
           {currentPage} / {totalPages}
         </span>
-        {currentPage < totalPages ? (
-          <Link
-            href={`/?page=${currentPage + 1}`}
-            className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
-          >
-            次へ
-          </Link>
-        ) : (
-          <span className="px-4 py-2 bg-gray-50 text-gray-300 rounded cursor-not-allowed">
-            次へ
-          </span>
-        )}
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          className={`p-2 rounded-full ${
+            currentPage >= totalPages
+              ? "bg-gray-100 text-gray-400"
+              : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+          } transition-all duration-200`}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* デスクトップではページ番号を表示 */}
-      <div className="hidden md:flex gap-2">
-        {currentPage > 1 && (
-          <Link
-            href={`/?page=${currentPage - 1}`}
-            className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
-          >
-            前へ
-          </Link>
-        )}
+      {/* デスクトップ表示 */}
+      <div className="hidden md:flex items-center gap-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          className={`p-2 rounded-full ${
+            currentPage <= 1
+              ? "invisible"
+              : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+          } transition-all duration-200`}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
 
-        {getPageNumbers().map((page, index) => (
-          page === '...' ? (
-            <span
-              key={`dot-${index}`}
-              className="px-4 py-2 text-gray-500"
-            >
-              {page}
-            </span>
-          ) : (
-            <Link
-              key={page}
-              href={`/?page=${page}`}
-              className={`px-4 py-2 rounded ${
-                currentPage === page
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              {page}
-            </Link>
-          )
-        ))}
+        <div className="flex items-center gap-1">
+          {getPageNumbers().map((page, index) =>
+            page === "..." ? (
+              <span key={`dot-${index}`} className="px-4 py-2 text-gray-400">
+                {page}
+              </span>
+            ) : (
+              <button
+                key={page}
+                onClick={() => handlePageChange(Number(page))}
+                className={`min-w-[40px] h-10 flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200 ${
+                  currentPage === page
+                    ? "bg-indigo-600 text-white shadow-md hover:bg-indigo-700"
+                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+                }`}
+              >
+                {page}
+              </button>
+            )
+          )}
+        </div>
 
-        {currentPage < totalPages && (
-          <Link
-            href={`/?page=${currentPage + 1}`}
-            className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
-          >
-            次へ
-          </Link>
-        )}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          className={`p-2 rounded-full ${
+            currentPage >= totalPages
+              ? "invisible"
+              : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+          } transition-all duration-200`}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
     </nav>
   );
-} 
+}

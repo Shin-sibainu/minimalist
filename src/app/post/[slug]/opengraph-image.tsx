@@ -57,7 +57,7 @@ export default async function Image({
                 fontFamily: "Noto Sans JP",
               }}
             >
-              {post?.title || "Post not found"}
+              {post?.title || "無題"}
             </h1>
             {post?.description && (
               <p

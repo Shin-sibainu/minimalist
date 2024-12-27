@@ -15,7 +15,7 @@ const notion = new NotionAPI();
 export const getAllPosts = cache(async () => {
   try {
     const res = await fetch(`${NOTION_API_BASE}/table/${NOTION_PAGE_ID}`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 10 },
     });
 
     if (!res.ok) {
@@ -28,17 +28,22 @@ export const getAllPosts = cache(async () => {
 
     return posts
       .filter((post: any) => post.Public)
-      .map((post: any) => ({
-        id: post.id,
-        title: post.Name,
-        slug: post.Slug,
-        date: post.Published,
-        author: post.Author,
-        tags: post.Tags,
-        description: post.Description,
-      }))
+      .map((post: any) => {
+        const date = post.Published
+          ? new Date(post.Published).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0];
+
+        return {
+          id: post.id,
+          title: post.Name || "無題",
+          slug: post.Slug || `untitled-${post.id}`,
+          date,
+          author: post.Author,
+          tags: Array.isArray(post.Tags) ? post.Tags : [],
+          description: post.Description || "",
+        };
+      })
       .sort((a: any, b: any) => {
-        // 日付の新しい順にソート
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       });
   } catch (error) {
@@ -52,10 +57,10 @@ export const getPostBySlug = cache(async (slug: string) => {
     const posts = await getAllPosts();
     const post = posts.find((p: any) => p.slug === slug);
 
-    if (!post) return null;
+    if (!post || !post.title) return null;
 
     const res = await fetch(`${NOTION_API_BASE}/page/${post.id}`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 10 },
     });
 
     if (!res.ok) {
@@ -64,12 +69,17 @@ export const getPostBySlug = cache(async (slug: string) => {
 
     const page = await res.json();
 
-    if (!page || typeof page !== "object") {
+    if (
+      !page || 
+      typeof page !== "object" || 
+      Object.keys(page).length === 0 ||
+      !Object.values(page).some((block: any) => 
+        block?.value?.type === "page" && 
+        block?.value?.properties?.title?.[0]?.[0]
+      )
+    ) {
       console.error(`Invalid page content for slug ${slug}`);
-      return {
-        ...post,
-        content: {}, // 空のオブジェクトをフォールバックとして返す
-      };
+      return null;
     }
 
     return {
@@ -125,6 +135,11 @@ export const getDatabase = cache(async () => {
       }
     }
 
+    // データベースのプロパティから追加情報を取得
+    const properties = block?.properties || {};
+    const author = properties.author?.[0]?.[0];
+    const site = properties.site?.[0]?.[0];
+
     const result = {
       icon,
       cover: block?.format?.page_cover
@@ -134,6 +149,9 @@ export const getDatabase = cache(async () => {
         : undefined,
       title: block?.properties?.title?.[0]?.[0] || undefined,
       coverPosition: block?.format?.page_cover_position || 0.5,
+      // 追加の情報
+      author,
+      site,
     };
 
     return result;
@@ -144,6 +162,8 @@ export const getDatabase = cache(async () => {
       cover: undefined,
       title: "Minimalist",
       coverPosition: 0.5,
+      author: undefined,
+      site: undefined,
     };
   }
 });

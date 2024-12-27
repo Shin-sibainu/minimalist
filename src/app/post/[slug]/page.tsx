@@ -24,16 +24,15 @@ export async function generateMetadata({
     };
   }
 
+  const title = post.title || "無題";
   const description =
     post.description ||
     post.excerpt ||
-    `${post.title}に関する記事です。${
-      post.author ? `著者: ${post.author}` : ""
-    }` ||
+    `${title}に関する記事です。${post.author ? `著者: ${post.author}` : ""}` ||
     "ブログ記事の説明";
 
   return {
-    title: post.title,
+    title,
     description,
     metadataBase: new URL(baseUrl || "http://localhost:3000"),
     openGraph: {
@@ -53,11 +52,13 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description, // 同じdescriptionを使用
+      title: post.title || "無題",
+      description,
       images: [`/post/${slug}/opengraph-image`],
-      creator: post.author ? `@${post.author}` : undefined,
-      site: "@your_site_handle",
+      creator: post.author
+        ? `@${post.author}`
+        : process.env.NEXT_PUBLIC_TWITTER_CREATOR_HANDLE,
+      site: process.env.NEXT_PUBLIC_TWITTER_SITE_HANDLE,
     },
   };
 }
@@ -93,25 +94,23 @@ export default async function BlogPost({
   return (
     <div className="max-w-2xl mx-auto px-4">
       <article>
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold">{post.title}</h1>
-          <div className="mt-4 text-gray-500">
-            <time>{post.date}</time>
-            {post.author && <span className="ml-4">By {post.author}</span>}
-          </div>
-          {post.tags && (
-            <div className="flex gap-2 mt-4">
-              {post.tags.map((tag: string) => (
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {post.tags && post.tags.length > 0 && 
+              post.tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="text-sm bg-gray-100 px-2 py-1 rounded"
+                  className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700 hover:bg-gray-200 transition-colors"
                 >
                   {tag}
                 </span>
-              ))}
-            </div>
-          )}
-        </header>
+              ))
+            }
+          </div>
+          <time className="text-sm text-gray-500">
+            {post.date}
+          </time>
+        </div>
         <div className="prose prose-lg prose-blue max-w-none">
           <NotionContent content={post.content} />
         </div>
