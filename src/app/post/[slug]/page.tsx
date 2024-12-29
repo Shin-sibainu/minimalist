@@ -96,7 +96,8 @@ export default async function BlogPost({
       <article>
         <div className="mb-6 flex items-center justify-between">
           <div className="flex flex-wrap gap-2">
-            {post.tags && post.tags.length > 0 && 
+            {post.tags &&
+              post.tags.length > 0 &&
               post.tags.map((tag: string) => (
                 <span
                   key={tag}
@@ -104,12 +105,9 @@ export default async function BlogPost({
                 >
                   {tag}
                 </span>
-              ))
-            }
+              ))}
           </div>
-          <time className="text-sm text-gray-500">
-            {post.date}
-          </time>
+          <time className="text-sm text-gray-500">{post.date}</time>
         </div>
         <div className="prose prose-lg prose-blue max-w-none">
           <NotionContent content={post.content} />
