@@ -44,7 +44,6 @@ async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      // Notionのデータベースから取得した作者情報があれば使用
       creator: dbInfo.author ? `@${dbInfo.author}` : undefined,
       site: dbInfo.site ? `@${dbInfo.site}` : undefined,
     },
@@ -64,12 +63,7 @@ async function generateMetadata(): Promise<Metadata> {
 }
 
 // メタデータを動的に生成
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://minimalist.notepress.xyz"
-  ),
-  // ... 他のメタデータ
-};
+export const metadata = generateMetadata();
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
