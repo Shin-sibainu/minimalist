@@ -15,7 +15,8 @@ async function generateMetadata(): Promise<Metadata> {
     : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const title = dbInfo.title || "Minimalist";
-  const description = "A minimalist blog template built with Next.js and Notion";
+  const description =
+    "A minimalist blog template built with Next.js and Notion";
 
   return {
     metadataBase: new URL(baseUrl),
