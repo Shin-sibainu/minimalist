@@ -15,9 +15,9 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   try {
-    const logoSrc = await fetch(
-      new URL("./notepress-logo.png", import.meta.url)
-    ).then((res) => res.arrayBuffer());
+    // const logoSrc = await fetch(
+    //   new URL("./notepress-logo.png", import.meta.url)
+    // ).then((res) => res.arrayBuffer());
 
     const slug = (await params).slug;
     const post = await getPostBySlug(slug);
@@ -148,7 +148,7 @@ export default async function Image({
       }
     );
   } catch (error) {
-    console.error("Failed to generate OG image:", error);
+    console.error(`OG image generation failed for slug:`, error);
     // エラー時のフォールバック画像
     return new ImageResponse(
       (

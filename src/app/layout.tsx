@@ -10,9 +10,7 @@ import { Metadata } from "next";
 // メタデータを動的に生成する関数
 async function generateMetadata(): Promise<Metadata> {
   const dbInfo = await getDatabase();
-  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const title = dbInfo.title || "Minimalist";
   const description =
