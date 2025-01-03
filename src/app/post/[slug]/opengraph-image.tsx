@@ -25,7 +25,7 @@ export default async function Image({
     }
 
     const truncatedTitle =
-      post.title.length > 30 ? post.title.slice(0, 30) + "..." : post.title;
+      post.title.length > 50 ? post.title.slice(0, 50) + "..." : post.title;
 
     return new ImageResponse(
       (
@@ -63,7 +63,7 @@ export default async function Image({
             >
               <h1
                 style={{
-                  fontSize: truncatedTitle.length > 20 ? "40px" : "48px",
+                  fontSize: truncatedTitle.length > 30 ? "36px" : "48px",
                   fontWeight: "900",
                   color: "#1a1a1a",
                   lineHeight: 1.4,
