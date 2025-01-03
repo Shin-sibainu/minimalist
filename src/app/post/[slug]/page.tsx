@@ -31,10 +31,17 @@ export async function generateMetadata({
     `${title}に関する記事です。${post.author ? `著者: ${post.author}` : ""}` ||
     "ブログ記事の説明";
 
+  // URLのバリデーションと修正
+  const getValidUrl = (url: string | undefined) => {
+    if (!url) return "http://localhost:3000";
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
+    return `https://${url}`;
+  };
+
   return {
     title,
     description,
-    metadataBase: new URL(baseUrl || "http://localhost:3000"),
+    metadataBase: new URL(getValidUrl(baseUrl)),
     openGraph: {
       title: post.title,
       description,
