@@ -115,10 +115,11 @@ export default async function RootLayout({
           <div className="max-w-4xl mx-auto py-6 px-4 text-center text-gray-500">
             © {new Date().getFullYear()} {"Minimalist"} from {""}
             <Link
-              href={"https://notepress.xyz"}
-              className="underline"
-              target="_blank"
-              rel="noreferrer"
+              // href={"https://notepress.xyz"}
+              href={"/"}
+              // className="underline"
+              // target="_blank"
+              // rel="noreferrer"
             >
               NotePress
             </Link>
