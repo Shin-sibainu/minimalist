@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getPostBySlug } from "@/lib/notion";
+import { fetchFont } from "./fetch-font";
 
 export const runtime = "edge";
 export const alt = "Blog Post OGP";
@@ -15,12 +16,16 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   try {
-    // const logoSrc = await fetch(
-    //   new URL("./notepress-logo.png", import.meta.url)
-    // ).then((res) => res.arrayBuffer());
-
     const slug = (await params).slug;
     const post = await getPostBySlug(slug);
+    const font = await fetchFont();
+
+    if (!post || !post.title) {
+      throw new Error(`Invalid post data for slug: ${slug}`);
+    }
+
+    const truncatedTitle =
+      post.title.length > 30 ? post.title.slice(0, 30) + "..." : post.title;
 
     return new ImageResponse(
       (
@@ -58,15 +63,17 @@ export default async function Image({
             >
               <h1
                 style={{
-                  fontSize: "48px",
+                  fontSize: truncatedTitle.length > 20 ? "40px" : "48px",
                   fontWeight: "900",
                   color: "#1a1a1a",
                   lineHeight: 1.4,
                   margin: 0,
                   textShadow: "0 0 1px rgba(0,0,0,0.1)",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
                 }}
               >
-                {post.title}
+                {truncatedTitle}
               </h1>
               {post.description && (
                 <p
@@ -143,12 +150,22 @@ export default async function Image({
       ),
       {
         ...size,
-        // システムフォントを使用
-        fonts: undefined,
+        fonts: font
+          ? [
+              {
+                name: "NotoSansJP",
+                data: font,
+                weight: 700,
+              },
+            ]
+          : undefined,
       }
     );
   } catch (error) {
-    console.error(`OG image generation failed for slug:`, error);
+    console.error(
+      `OG image generation failed for slug: ${(await params).slug}`,
+      error
+    );
     // エラー時のフォールバック画像
     return new ImageResponse(
       (
