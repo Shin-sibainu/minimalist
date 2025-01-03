@@ -64,7 +64,12 @@ async function generateMetadata(): Promise<Metadata> {
 }
 
 // メタデータを動的に生成
-export const metadata = generateMetadata();
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://minimalist.notepress.xyz"
+  ),
+  // ... 他のメタデータ
+};
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
