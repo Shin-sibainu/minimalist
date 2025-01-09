@@ -17,7 +17,11 @@ const nextConfig = {
         hostname: "prod-files-secure.s3.us-west-2.amazonaws.com",
       },
     ],
+    unoptimized: true,
   },
+  poweredByHeader: false,
+  compress: true,
+  productionBrowserSourceMaps: false,
 };
 
 export default nextConfig;

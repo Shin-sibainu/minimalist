@@ -3,7 +3,7 @@ import { getDatabase } from "@/lib/notion";
 import { fetchFont } from "./post/[slug]/fetch-font";
 
 export const runtime = "edge";
-export const revalidate = 60 * 60 * 24;
+export const revalidate = 60 * 60 * 24 * 7;
 export const alt = "Blog OGP";
 export const size = {
   width: 1200,
