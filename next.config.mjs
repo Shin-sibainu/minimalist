@@ -17,20 +17,6 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  poweredByHeader: false,
-  compress: true,
-  productionBrowserSourceMaps: false,
-
-  // ビルド最適化のための追加設定
-  swcMinify: true,
-
-  // キャッシュ戦略の最適化
-  experimental: {
-    // ビルドキャッシュを最適化
-    turbotrace: {
-      contextDirectory: ".",
-    },
-  },
 };
 
 export default nextConfig;
