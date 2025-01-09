@@ -22,6 +22,13 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   productionBrowserSourceMaps: false,
+  experimental: {
+    memoryBasedWorkersCount: true,
+  },
+  webpack: (config) => {
+    config.optimization.memoryLimit = 256;
+    return config;
+  },
 };
 
 export default nextConfig;
