@@ -11,8 +11,8 @@ const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  preload: true,
-  adjustFontFallback: false
+  preload: false, // preloadを無効化（swapがあれば十分）
+  adjustFontFallback: false,
 });
 
 // メタデータを動的に生成する関数
