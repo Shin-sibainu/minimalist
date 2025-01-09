@@ -11,7 +11,7 @@ const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  preload: false, // preloadを無効化（swapがあれば十分）
+  preload: true,
   adjustFontFallback: false,
 });
 
