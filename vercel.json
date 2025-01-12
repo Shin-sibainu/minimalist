@@ -1,0 +1,28 @@
+{
+  "github": {
+    "silent": true,
+    "enabled": false,
+    "autoJobCancellation": true
+  },
+  "headers": [
+    {
+      "source": "/opengraph-image",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=60"
+        }
+      ]
+    }
+  ],
+  "images": {
+    "sizes": [640, 750, 828, 1080, 1200],
+    "domains": ["www.notion.so"],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "**.notion.so"
+      }
+    ]
+  }
+}
