@@ -15,6 +15,13 @@ export default function Error() {
           <li>記事の内容が正しく入力されているか</li>
           <li>公開状態になっているか</li>
         </ul>
+        <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+          <p className="text-yellow-800 text-sm">
+            ※
+            現在、箇条書きリストを使用すると稀にエラーが発生することがあります。
+            この問題は順次修正していく予定です。
+          </p>
+        </div>
         <div className="mt-8">
           <Link
             href="/"
