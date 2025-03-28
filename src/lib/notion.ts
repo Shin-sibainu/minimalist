@@ -70,12 +70,13 @@ export const getPostBySlug = cache(async (slug: string) => {
     const page = await res.json();
 
     if (
-      !page || 
-      typeof page !== "object" || 
+      !page ||
+      typeof page !== "object" ||
       Object.keys(page).length === 0 ||
-      !Object.values(page).some((block: any) => 
-        block?.value?.type === "page" && 
-        block?.value?.properties?.title?.[0]?.[0]
+      !Object.values(page).some(
+        (block: any) =>
+          block?.value?.type === "page" &&
+          block?.value?.properties?.title?.[0]?.[0]
       )
     ) {
       console.error(`Invalid page content for slug ${slug}`);
