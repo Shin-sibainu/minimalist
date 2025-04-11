@@ -108,7 +108,7 @@ export default async function Image({
                 )}
                 {post?.author && (
                   <p style={{ fontSize: "20px", color: "#4b5563", margin: 0 }}>
-                    By {post.author}
+                    By {post.author.name}
                   </p>
                 )}
               </div>
