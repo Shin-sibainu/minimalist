@@ -2,6 +2,8 @@
 import { getPostBySlug, getAllPosts } from "@/lib/notion";
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Image from "next/image";
 
 const NotionContent = dynamic(
   () => import("@/components/notion/NotionContent"),
@@ -47,7 +49,7 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime: post.date,
-      authors: post.author ? [post.author] : undefined,
+      authors: post.author.name ? [post.author.name] : undefined,
       images: [
         {
           url: `/post/${slug}/opengraph-image`,
@@ -91,11 +93,7 @@ export default async function BlogPost({
   const post = await getPostBySlug(slug);
 
   if (!post) {
-    return (
-      <div className="text-center text-gray-600 py-12">
-        記事が見つかりませんでした
-      </div>
-    );
+    notFound();
   }
 
   return (
@@ -116,8 +114,39 @@ export default async function BlogPost({
           </div>
           <time className="text-sm text-gray-500">{post.date}</time>
         </div>
-        <div className="prose prose-lg prose-blue max-w-none">
-          <NotionContent content={post.content} />
+        {post.coverImage && (
+          <div className="relative w-full h-[200px] sm:h-[300px] mb-8">
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            {post.icon && (
+              <div className="absolute -bottom-4 left-8 w-16 h-16 flex items-center justify-center bg-background rounded-lg">
+                {post.icon.startsWith("http") ? (
+                  <Image
+                    src={post.icon}
+                    alt={post.title}
+                    width={62}
+                    height={62}
+                    className="rounded-sm"
+                  />
+                ) : (
+                  <span className="text-5xl">{post.icon}</span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 mt-4">
+          <h1 className="text-3xl font-bold text-foreground">{post.title}</h1>
+        </div>
+
+        <div className="prose prose-slate dark:prose-invert mt-8 max-w-none">
+          <NotionContent content={post.content} showTableOfContents={true} />
         </div>
       </article>
     </div>
